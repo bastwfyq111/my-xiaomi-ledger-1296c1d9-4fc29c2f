@@ -1,30 +1,51 @@
 # مجلس طبي
 
-اريد تحويل هذا الملف الي تطبيق يتناسب مع هواتف شاومي اندرويد يعمل بدون الاتصال بالانترنت 
+أريد تحويل هذا الملف الي تطبيق يتناسب مع هواتف شاومي اندرويد يعمل بدون الاتصال بالانترنت
 
-لتسهيل الادخالات اريد ان مايتم اضافته في تبويب حوافظ التوريد يتم اتتقاله مباشرة الي تبويب الحساب بحسب الخانات التي موجودة حاليا في التبويب ثم الانتقال الي تيويب القيود اليوميه الي موجود في الملف السابق وقم بمسح جميبع البيانات المجودة والحفاظ علي الاسماءوالتخصص فقط
-
-والبحث عن الاسماء بحسب الموجوده في الملف نفسه وكذلك تصدير البيانات الي كسل وبي دي اف وكذلك السماح باستيراد ملف اكسل
+لتسهيل الادخالات اريد ان مايتم اضافته في تبويب حوافظ التوريد يتم اتتقاله مباشرة الي تبويب الحساب بحسب الخانة، والبحث عن الاسماء بحسب الموجوده في الملف نفسه وكذلك تصدير البيانات الي اكسبل وبي دي اف وكذلك السماح باستيراد ملفات.
 
 This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://my-xiaomi-ledger-1296c1d9.lovable.app
 
-## Build with Lovable
+## Development (local)
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d285fd53-54a9-4779-ad90-05ac04b8f9fd).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+بعد استنساخ المستودع:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
+
+## Android (APK) — offline PWA + Capacitor
+
+الخطوات لإنتاج تطبيق أندرويد يعمل بدون إنترنت (شرح سريع):
+
+1. جهّز تطبيق الويب كأساس PWA (تمت إضافة manifest و service worker بسيط في هذا المستودع).
+2. ابنِ نسخة الإنتاج:
+
+```sh
+npm run build
+```
+
+3. ثبت Capacitor ثم أضف منصة أندرويد:
+
+```sh
+npm install @capacitor/core @capacitor/cli --save-dev
+npx cap init
+# اختر اسم التطبيق و appId (مثال: com.example.mymedicapp)
+npx cap add android
+npx cap copy
+npx cap open android
+```
+
+4. افتح المشروع في Android Studio، وابنِ الـ APK أو الـ App Bundle. تأكد من أن ملف `webDir` في `capacitor.config.json` يشير إلى مجلد البناء (`dist`).
+
+ملاحظات:
+- الخدمة service-worker بسيطة؛ قد تحتاج لتحسينها (cache strategies) خصوصاً إذا كانت الموارد كبيرة.
+- احفظ البيانات محلياً باستخدام IndexedDB (مثلاً مكتبة Dexie) لتعمل دون إنترنت.
+
+## تنظيف وملحوظات
+
+- إذا كنت تستخدم npm اترك package-lock.json واحذف bun.lock. إذا تستخدم bun فعّل bun وامسح package-lock.json.
+- أزل الملفات `untitled.chat` إن لم تكن ضرورية.
