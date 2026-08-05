@@ -13,14 +13,27 @@ export function initPwa() {
     }
   })();
   const host = window.location.hostname;
-  const isPreview =
-    host.includes("id-preview--") ||
-    host.includes("lovableproject.com") ||
-    (host.includes("lovable.app") && host.includes("preview"));
+  const isPreviewHost =
+    host.startsWith("id-preview--") ||
+    host.startsWith("preview--") ||
+    host === "lovableproject.com" ||
+    host.endsWith(".lovableproject.com") ||
+    host === "lovableproject-dev.com" ||
+    host.endsWith(".lovableproject-dev.com") ||
+    host === "beta.lovable.dev" ||
+    host.endsWith(".beta.lovable.dev");
+  const swOff = new URLSearchParams(window.location.search).get("sw") === "off";
 
-  if (inIframe || isPreview) {
-    // إلغاء أي SW سابق في وضع المعاينة
-    navigator.serviceWorker?.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+  if (inIframe || isPreviewHost || swOff || !import.meta.env.PROD) {
+    // إلغاء أي تسجيل سابق للخدمة في وضع التطوير/المعاينة
+    navigator.serviceWorker
+      ?.getRegistrations()
+      .then((rs) =>
+        rs.forEach((r) => {
+          if (r.active?.scriptURL.includes("/sw.js") || r.installing || r.waiting) r.unregister();
+        }),
+      )
+      .catch(() => {});
     return;
   }
 
@@ -31,6 +44,7 @@ export function initPwa() {
         .catch((e) => console.warn("SW register failed", e));
     });
   }
+
 
   window.addEventListener("beforeinstallprompt", (e: any) => {
     e.preventDefault();

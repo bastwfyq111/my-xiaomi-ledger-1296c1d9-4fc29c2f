@@ -4,8 +4,6 @@ import { RouterProvider } from "@tanstack/react-router";
 import { getRouter } from "./router";
 import "../src/styles.css";
 
-// Register the service worker (offline support)
-import "./sw-register";
 
 const router = getRouter();
 const container = document.getElementById("root");

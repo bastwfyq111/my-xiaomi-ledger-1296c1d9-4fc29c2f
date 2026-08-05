@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "icon", href: "/icon.svg" },
+      { rel: "icon", href: "/icon-192.svg" },
       { rel: "apple-touch-icon", href: "/icon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
@@ -228,4 +228,3 @@ function Index() {
   );
 }
 
-export default Index;
