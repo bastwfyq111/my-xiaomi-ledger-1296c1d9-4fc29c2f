@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
 import { fmt, today } from "@/lib/format";
 import { DESCRIPTIONS } from "@/lib/accounts";
@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import TabActions from "./TabActions";
 import schema from "@/data/revenueTemplate.json";
+import traineesList from "@/data/trainees.json";
 
 const COLS = [
   { key: "date", label: "التاريخ" },
@@ -163,6 +164,8 @@ export default function AccountsTab() {
   } = useStore();
   const [form, setForm] = useState<FormType>(emptyForm);
   const [editingRow, setEditingRow] = useState<any | null>(null);
+  const [nameQuery, setNameQuery] = useState("");
+  const [showSugg, setShowSugg] = useState(false);
 
   // مطابقة شاملة معتمدة على sourceHafizaId (مفتاح فريد) لمنع التكرار
   const handleSyncFromHafiza = () => {
@@ -361,6 +364,69 @@ export default function AccountsTab() {
     const pinned = openingRow ? [{ ...openingRow, balance: base }] : [];
     return [...pinned, ...rest];
   }, [filtered, accounts]);
+
+  // قائمة اقتراحات الأسماء: دمج المتدربين مع الأسماء المستخدمة سابقاً في السجلات
+  const nameSuggestions = useMemo(() => {
+    const normalize = (s: string) => String(s ?? "").trim();
+    const seen = new Set<string>();
+    const allNames: { name: string; specialty: string; batch: string }[] = [];
+
+    // الأسماء من ملف المتدربين
+    if (Array.isArray(traineesList)) {
+      traineesList.forEach((t: any) => {
+        const n = normalize(t.name);
+        if (n && !seen.has(n)) {
+          seen.add(n);
+          allNames.push({
+            name: n,
+            specialty: normalize(t.specialty || t.speciality || ""),
+            batch: normalize(t.batch || ""),
+          });
+        }
+      });
+    }
+
+    // الأسماء المستخدمة فعلاً في سجلات تبويب الحساب
+    accounts.forEach((acc: any) => {
+      const n = normalize(acc.name);
+      if (n && !seen.has(n)) {
+        seen.add(n);
+        allNames.push({
+          name: n,
+          specialty: normalize(acc.specialty || ""),
+          batch: "",
+        });
+      }
+    });
+
+    if (!nameQuery.trim()) return allNames.slice(0, 20);
+
+    const query = normalize(nameQuery).replace(/\s+/g, " ").trim();
+    const filtered = allNames.filter((item) => {
+      const normalizedName = normalize(item.name).replace(/\s+/g, " ").trim();
+      return normalizedName.includes(query);
+    });
+    return filtered.slice(0, 20);
+  }, [nameQuery, accounts]);
+
+  // اختيار اسم من الاقتراحات
+  const pickName = (t: { name: string; specialty: string; batch?: string }) => {
+    setForm({ ...form, name: t.name, specialty: t.specialty || form.specialty });
+    setNameQuery(t.name);
+    setShowSugg(false);
+  };
+
+  // مزامنة nameQuery مع form.name عند تعديل صف أو تفريغ النموذج
+  useEffect(() => {
+    setNameQuery(form.name || "");
+  }, [form.name]);
+
+  // عند بدء تعديل صف، نملأ nameQuery أيضاً
+  useEffect(() => {
+    if (editingRow) {
+      setNameQuery(editingRow.name || "");
+    }
+  }, [editingRow]);
 
   const submit = () => {
     if (!form.description && !form.name) {
