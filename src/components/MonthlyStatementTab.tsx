@@ -642,10 +642,7 @@ export default function MonthlyStatementTab() {
             {revenueByCode.length > 0 && (
               <tfoot>
                 <tr className="bg-slate-900 text-white font-extrabold">
-                  <td
-                    colSpan={3}
-                    className="border border-black px-2 py-2 text-center"
-                  >
+                  <td colSpan={3} className="border border-black px-2 py-2 text-center">
                     الإجمالي العام لرموز الإيراد
                   </td>
                   <td className="border border-black px-2 py-2 text-center font-mono min-w-[120px] whitespace-nowrap overflow-hidden">

@@ -45,7 +45,6 @@ export function initPwa() {
     });
   }
 
-
   window.addEventListener("beforeinstallprompt", (e: any) => {
     e.preventDefault();
     deferredPrompt = e;

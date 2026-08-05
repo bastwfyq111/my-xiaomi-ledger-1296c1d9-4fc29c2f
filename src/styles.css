@@ -31,45 +31,50 @@
 }
 :root {
   --radius: 0.85rem;
-  
+
   /* 🌐 الخلفية العامة للموقع ونصوصها */
-  --background: oklch(0.98 0.005 240);       /* خلفية فاتحة جداً بنقاء مريح للعين */
-  --foreground: oklch(0.12 0.03 240);       /* نصوص داكنة جداً لتباين ممتاز */
-  
+  --background: oklch(0.98 0.005 240); /* خلفية فاتحة جداً بنقاء مريح للعين */
+  --foreground: oklch(0.12 0.03 240); /* نصوص داكنة جداً لتباين ممتاز */
+
   /* 📦 البطاقات والحاويات الكبيرة */
-  --card: oklch(1 0 0);                     /* الأبيض النقي للبطاقات */
-  --card-foreground: oklch(0.12 0.03 240);  /* نصوص البطاقات الداكنة */
-  
+  --card: oklch(1 0 0); /* الأبيض النقي للبطاقات */
+  --card-foreground: oklch(0.12 0.03 240); /* نصوص البطاقات الداكنة */
+
   /* ⚡ اللون الأساسي (الأزرق اللامع لترويسات الجداول والأزرار الرئيسية) */
-  --primary: oklch(0.55 0.24 250);          /* أزرق كهربائي لامع وحيوي جداً (Vibrant Electric Blue) */
-  --primary-foreground: oklch(0.99 0 0);    /* النص المكتوب فوقه باللون الأبيض الناصع */
-  
+  --primary: oklch(0.55 0.24 250); /* أزرق كهربائي لامع وحيوي جداً (Vibrant Electric Blue) */
+  --primary-foreground: oklch(0.99 0 0); /* النص المكتوب فوقه باللون الأبيض الناصع */
+
   /* 🔵 الألوان الثانوية والباهتة (تم تحويلها إلى درجات زرقاء لامعة مخففة) */
-  --secondary: oklch(0.92 0.04 240);        /* أزرق سماوي ناعم وحيوي للأزرار الثانوية */
+  --secondary: oklch(0.92 0.04 240); /* أزرق سماوي ناعم وحيوي للأزرار الثانوية */
   --secondary-foreground: oklch(0.35 0.15 250); /* نص أزرق واضح فوق الخلفية الثانوية */
-  
-  --muted: oklch(0.95 0.03 242);            /* أزرق جليدي فاتح جداً لصفوف الجدول المتناوبة */
+
+  --muted: oklch(0.95 0.03 242); /* أزرق جليدي فاتح جداً لصفوف الجدول المتناوبة */
   --muted-foreground: oklch(0.45 0.12 245); /* نصوص زرقاء حيوية متوسطة السطوع للتواريخ والتلميحات */
-  
+
   /* ✨ لون التمييز والتحويم */
-  --accent: oklch(0.60 0.22 255);           /* أزرق نيون مشع عند تحويم الماوس أو التحديد */
-  --accent-foreground: oklch(0.99 0 0);     /* نص أبيض ناصع فوق التحديد */
-  
+  --accent: oklch(0.6 0.22 255); /* أزرق نيون مشع عند تحويم الماوس أو التحديد */
+  --accent-foreground: oklch(0.99 0 0); /* نص أبيض ناصع فوق التحديد */
+
   /* ⚠️ الحالات الخاصة (الأخطاء والنجاح) */
-  --destructive: oklch(0.55 0.22 25);       /* أحمر صارخ للعمليات الخطيرة والحذف */
+  --destructive: oklch(0.55 0.22 25); /* أحمر صارخ للعمليات الخطيرة والحذف */
   --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.58 0.19 145);          /* أخضر حيوي لحفظ البيانات وتصدير إكسل */
+  --success: oklch(0.58 0.19 145); /* أخضر حيوي لحفظ البيانات وتصدير إكسل */
   --success-foreground: oklch(0.99 0 0);
-  
+
   /* 🖌️ الحدود والبرواز (الأسود الخفيف والناعم الذي طلبته) */
-  --border: oklch(0.20 0.01 240 / 0.15);    /* أسود ناعم جداً ومخفف بنسبة شفافية 15% لحدود الجدول والبطاقات */
-  --input: oklch(0.10 0.01 240 / 0.22);     /* أسود خفيف وواضح بنسبة 22% لرسم حدود حقول الإدخال والأزرار بشكل أنيق */
-  --ring: oklch(0.55 0.24 250 / 0.40);      /* هالة مضيئة باللون الأزرق اللامع عند النقر داخل الحقل */
+  --border: oklch(
+    0.2 0.01 240 / 0.15
+  ); /* أسود ناعم جداً ومخفف بنسبة شفافية 15% لحدود الجدول والبطاقات */
+  --input: oklch(
+    0.1 0.01 240 / 0.22
+  ); /* أسود خفيف وواضح بنسبة 22% لرسم حدود حقول الإدخال والأزرار بشكل أنيق */
+  --ring: oklch(0.55 0.24 250 / 0.4); /* هالة مضيئة باللون الأزرق اللامع عند النقر داخل الحقل */
 }
- 
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
   html {
     direction: rtl;
     -webkit-text-size-adjust: 100%;
@@ -81,41 +86,63 @@
       radial-gradient(900px 500px at -10% 110%, oklch(0.92 0.06 35 / 0.4), transparent 60%),
       var(--color-background);
     color: var(--color-foreground);
-    font-family: 'Tajawal', 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+    font-family: "Tajawal", "Cairo", "Segoe UI", Tahoma, sans-serif;
     font-weight: 500;
     letter-spacing: 0;
     min-height: 100dvh;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
   }
-  h1, h2, h3, h4 { font-family: 'Cairo', 'Tajawal', sans-serif; font-weight: 800; letter-spacing: -0.01em; }
-  
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Cairo", "Tajawal", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
   /* تنسيق الجداول: مواءمة العرض، منع الالتفاف، ومحاذاة سنتر */
-  table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    font-feature-settings: "tnum" 1, "lnum" 1; 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-feature-settings:
+      "tnum" 1,
+      "lnum" 1;
   }
-  th { 
-    font-weight: 700; 
+  th {
+    font-weight: 700;
   }
-  table th, table td {
-    text-align: center;         /* محاذاة أفقية إلى الوسط */
-    vertical-align: middle;       /* محاذاة عمودية إلى الوسط */
+  table th,
+  table td {
+    text-align: center; /* محاذاة أفقية إلى الوسط */
+    vertical-align: middle; /* محاذاة عمودية إلى الوسط */
     white-space: nowrap !important; /* منع التفاف النص نهائياً */
-    padding: 6px 4px;           /* حشوة مدمجة بدون هوامش كبيرة */
+    padding: 6px 4px; /* حشوة مدمجة بدون هوامش كبيرة */
     border: 1px solid #000 !important; /* حدود سوداء موحدة */
   }
 
-  .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
-  button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  
+  .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 600;
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
   /* Prevent iOS / MIUI auto-zoom on focus by enforcing 16px minimum */
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     font-size: 16px;
   }
   /* Smooth touch scrolling for horizontally-scrolling tables */
-  .overflow-x-auto { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
 }
 
 /* Mobile-only tweaks (Xiaomi / small Android phones) */
@@ -127,22 +154,37 @@
       var(--color-background);
   }
   /* Respect notch / status bar / gesture nav on Xiaomi */
-  .safe-pad-x { padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right)); }
-  .safe-pad-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-  .safe-pad-top { padding-top: max(0.5rem, env(safe-area-inset-top)); }
-  
-  /* تقليص حجم الخط والحشوة في الجوال ليتناسب العرض مع الشاشات الصغيرة */
-  table { 
-    font-size: 12px; 
+  .safe-pad-x {
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
-  table th, table td {
+  .safe-pad-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-pad-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
+  /* تقليص حجم الخط والحشوة في الجوال ليتناسب العرض مع الشاشات الصغيرة */
+  table {
+    font-size: 12px;
+  }
+  table th,
+  table td {
     padding: 4px 3px; /* حشوة أصغر للموبايل بدون هوامش */
   }
   /* Ensure inputs inside table filter rows don't trigger zoom but stay compact visually */
-  table input { font-size: 14px; padding: 3px 4px; }
+  table input {
+    font-size: 14px;
+    padding: 3px 4px;
+  }
 }
 
 @media print {
-  .no-print { display: none !important; }
-  body { background: white; }
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
 }

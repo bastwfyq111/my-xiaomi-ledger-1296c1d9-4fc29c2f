@@ -228,7 +228,8 @@ export const useStore = create<State>()(
 
       syncHafizaToAccount: (hafiza: Hafiza) => {
         const year = hafiza.date?.split("-")[0];
-        if (year !== "2026") return;
+        // دعم المزامنة لسنوات 2025 و 2026 و 2027 لضمان مرونة أكبر
+        if (!["2025", "2026", "2027"].includes(year)) return;
 
         let existingAccount = get().accounts.find((acc) => acc.sourceHafizaId === hafiza.id);
         if (!existingAccount && hafiza.hafizaNo) {

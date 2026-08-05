@@ -99,9 +99,21 @@ export default function HafizaTab() {
   // إعداد قائمة المقترحات لأسماء المتدربين لتسهيل التعبئة السرية
   const nameSuggestions = useMemo(() => {
     const q = nameQuery.trim();
-    if (!q) return trainees.slice(0, 8);
-    return trainees.filter((t) => t.name.includes(q)).slice(0, 8);
-  }, [trainees, nameQuery]);
+    // جمع كل الأسماء الفريدة من المتدربين، الحوافظ، والحسابات
+    const allNames = new Map<string, Trainee>();
+    
+    trainees.forEach(t => allNames.set(t.name, t));
+    hafiza.forEach(h => {
+      if (h.name && !allNames.has(h.name)) {
+        allNames.set(h.name, { name: h.name, batch: h.batch || "", specialty: h.specialty || "" });
+      }
+    });
+    
+    const namesArray = Array.from(allNames.values());
+    
+    if (!q) return namesArray.slice(0, 8);
+    return namesArray.filter((t) => t.name.includes(q)).slice(0, 8);
+  }, [trainees, hafiza, nameQuery]);
 
   const pickName = (t: Trainee) => {
     setForm((f) => ({ ...f, name: t.name, batch: t.batch, specialty: t.specialty }));

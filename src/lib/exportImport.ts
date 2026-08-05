@@ -36,8 +36,18 @@ function buildJournalSheet(journal: Journal[]): XLSX.WorkSheet {
   }
 
   const monthsArabic = [
-    "يناير", "فبراير", "مارس", "ابريل", "مايو", "يونيو",
-    "يوليو", "اغسطس", "سبتمبر", "اكتوبر", "نوفمبر", "ديسمبر",
+    "يناير",
+    "فبراير",
+    "مارس",
+    "ابريل",
+    "مايو",
+    "يونيو",
+    "يوليو",
+    "اغسطس",
+    "سبتمبر",
+    "اكتوبر",
+    "نوفمبر",
+    "ديسمبر",
   ];
   const sorted = [...journal].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
   const grouped = new Map<string, Journal[]>();
@@ -250,7 +260,12 @@ export async function importFromExcel(file: File, only?: ImportKind) {
   const detectKind = (sheetName: string, cols: string[]): ImportKind | null => {
     const n = sheetName;
     if (n.includes("ايراد") || n.includes("إيراد") || n.includes("موارد")) return "revenue";
-    if (n.includes("كشف") || n.includes("حساب المدة") || n.includes("شهر يناير") || n.includes("شهر فبراير"))
+    if (
+      n.includes("كشف") ||
+      n.includes("حساب المدة") ||
+      n.includes("شهر يناير") ||
+      n.includes("شهر فبراير")
+    )
       return "monthly";
     if (n.includes("قسط") || n.includes("الأقساط") || n.includes("الاقساط")) return "installments";
     if (n.includes("حافظ") || n.includes("حوافظ")) return "hafiza";
@@ -266,8 +281,16 @@ export async function importFromExcel(file: File, only?: ImportKind) {
 
   const findHeaderRow = (aoa: unknown[][]): number => {
     const markers = [
-      "الاسم", "البيان", "رقم الحافظة", "مبلغ الحافظة", "مدين",
-      "دائن", "الإيرادات", "المصروفات", "رقم الاستمارة", "رسوم الدراسة",
+      "الاسم",
+      "البيان",
+      "رقم الحافظة",
+      "مبلغ الحافظة",
+      "مدين",
+      "دائن",
+      "الإيرادات",
+      "المصروفات",
+      "رقم الاستمارة",
+      "رسوم الدراسة",
     ];
     for (let i = 0; i < Math.min(aoa.length, 15); i++) {
       const row = (aoa[i] || []).map(norm);
@@ -332,7 +355,9 @@ export async function importFromExcel(file: File, only?: ImportKind) {
       }
     }
     const out: Record<string, number> = {};
-    let curCh = 0, curSec = 0, curIt = 0;
+    let curCh = 0,
+      curSec = 0,
+      curIt = 0;
     for (let i = 5; i < aoa.length; i++) {
       const row = aoa[i] as unknown[];
       if (!row) continue;
@@ -380,7 +405,8 @@ export async function importFromExcel(file: File, only?: ImportKind) {
       const desc = norm(row[3]);
       const date = row[2];
       if (!date && !desc) continue;
-      let debitCol: string | null = null, debitAmt = 0;
+      let debitCol: string | null = null,
+        debitAmt = 0;
       for (let c = DEBIT_FIRST - 1; c <= DEBIT_LAST - 1; c++) {
         const v = parseNumericValue(row[c]);
         if (v) {
@@ -389,7 +415,8 @@ export async function importFromExcel(file: File, only?: ImportKind) {
           break;
         }
       }
-      let creditCol: string | null = null, creditAmt = 0;
+      let creditCol: string | null = null,
+        creditAmt = 0;
       for (let c = CREDIT_FIRST - 1; c <= CREDIT_LAST - 1; c++) {
         const v = parseNumericValue(row[c]);
         if (v) {
@@ -422,9 +449,21 @@ export async function importFromExcel(file: File, only?: ImportKind) {
   const monthIndexFromName = (name: string): number => {
     const n = normHeader(name);
     const map: Record<string, number> = {
-      يناير: 1, فبراير: 2, مارس: 3, ابريل: 4, أبريل: 4, مايو: 5,
-      يونيو: 6, يوليو: 7, اغسطس: 8, أغسطس: 8, سبتمبر: 9,
-      اكتوبر: 10, أكتوبر: 10, نوفمبر: 11, ديسمبر: 12,
+      يناير: 1,
+      فبراير: 2,
+      مارس: 3,
+      ابريل: 4,
+      أبريل: 4,
+      مايو: 5,
+      يونيو: 6,
+      يوليو: 7,
+      اغسطس: 8,
+      أغسطس: 8,
+      سبتمبر: 9,
+      اكتوبر: 10,
+      أكتوبر: 10,
+      نوفمبر: 11,
+      ديسمبر: 12,
     };
     for (const k of Object.keys(map)) if (n.includes(normHeader(k))) return map[k];
     return 0;
@@ -478,27 +517,55 @@ export async function importFromExcel(file: File, only?: ImportKind) {
       const opsC = parseNumericValue(row[4]);
       if (importOpening && openD)
         out.push({
-          id: uid(), date: openDate, formNo: "", settlement: "",
+          id: uid(),
+          date: openDate,
+          formNo: "",
+          settlement: "",
           description: "رصيد افتتاحي (استيراد كشف شهري)",
-          account, debitAccount: account, creditAccount: "", debit: openD, credit: 0,
+          account,
+          debitAccount: account,
+          creditAccount: "",
+          debit: openD,
+          credit: 0,
         });
       if (importOpening && openC)
         out.push({
-          id: uid(), date: openDate, formNo: "", settlement: "",
+          id: uid(),
+          date: openDate,
+          formNo: "",
+          settlement: "",
           description: "رصيد افتتاحي (استيراد كشف شهري)",
-          account: "", debitAccount: "", creditAccount: account, debit: 0, credit: openC,
+          account: "",
+          debitAccount: "",
+          creditAccount: account,
+          debit: 0,
+          credit: openC,
         });
       if (opsD)
         out.push({
-          id: uid(), date: opsDate, formNo: "", settlement: "",
+          id: uid(),
+          date: opsDate,
+          formNo: "",
+          settlement: "",
           description: `عمليات ${sheetName} (استيراد كشف شهري)`,
-          account, debitAccount: account, creditAccount: "", debit: opsD, credit: 0,
+          account,
+          debitAccount: account,
+          creditAccount: "",
+          debit: opsD,
+          credit: 0,
         });
       if (opsC)
         out.push({
-          id: uid(), date: opsDate, formNo: "", settlement: "",
+          id: uid(),
+          date: opsDate,
+          formNo: "",
+          settlement: "",
           description: `عمليات ${sheetName} (استيراد كشف شهري)`,
-          account: "", debitAccount: "", creditAccount: account, debit: 0, credit: opsC,
+          account: "",
+          debitAccount: "",
+          creditAccount: account,
+          debit: 0,
+          credit: opsC,
         });
     }
     return out;
@@ -513,7 +580,10 @@ export async function importFromExcel(file: File, only?: ImportKind) {
       }
     }
 
-    if ((!only || only === "revenue") && (name.includes("ايراد") || name.includes("إيراد") || name.includes("موارد"))) {
+    if (
+      (!only || only === "revenue") &&
+      (name.includes("ايراد") || name.includes("إيراد") || name.includes("موارد"))
+    ) {
       const rev = parseRevenueSheet(wb.Sheets[name], name);
       if (rev) {
         Object.assign(result.revenue, rev);
@@ -541,9 +611,13 @@ export async function importFromExcel(file: File, only?: ImportKind) {
         const hafizaNo = cellStr(get(r, "رقم الحافظة"));
         if (!name && !hafizaNo) return;
         result.hafiza.push({
-          id: uid(), name, batch: cellStr(get(r, "الدفعة")),
-          specialty: cellStr(get(r, "التخصص")), date: toDate(get(r, "التاريخ")),
-          hafizaNo, description: cellStr(get(r, "البيان")),
+          id: uid(),
+          name,
+          batch: cellStr(get(r, "الدفعة")),
+          specialty: cellStr(get(r, "التخصص")),
+          date: toDate(get(r, "التاريخ")),
+          hafizaNo,
+          description: cellStr(get(r, "البيان")),
           hafizaAmount: parseNumericValue(get(r, "مبلغ الحافظة")),
           notifyDate: toDate(get(r, "تاريخ التوريد")),
           notifyNo: cellStr(get(r, "رقم الاشعار")),
@@ -562,19 +636,27 @@ export async function importFromExcel(file: File, only?: ImportKind) {
         let hafizaNo = cellStr(get(r, "رقم الحافظة"));
         const hafizaNoNum = Number(hafizaNo);
         if (
-          hafizaNo && !isNaN(hafizaNoNum) && hafizaNoNum > 10000 &&
+          hafizaNo &&
+          !isNaN(hafizaNoNum) &&
+          hafizaNoNum > 10000 &&
           (hafizaNoNum === hafizaAmount || hafizaNoNum === income || hafizaNoNum === expense)
         ) {
           hafizaNo = "";
         }
         result.accounts.push({
-          id: uid(), date: toDate(get(r, "التاريخ")), hafizaNo,
+          id: uid(),
+          date: toDate(get(r, "التاريخ")),
+          hafizaNo,
           notifyNo: cellStr(get(r, "رقم الاشعار")),
           notifyDate: toDate(get(r, "تاريخ التوريد")),
           checkNo: cellStr(get(r, "رقم الشيك")),
           checkDate: toDate(get(r, "تاريخه", "تاريخ الشيك")),
-          description, specialty: cellStr(get(r, "التخصص")),
-          name, hafizaAmount, income, expense,
+          description,
+          specialty: cellStr(get(r, "التخصص")),
+          name,
+          hafizaAmount,
+          income,
+          expense,
         });
       });
     } else if (kind === "journal") {
@@ -585,11 +667,14 @@ export async function importFromExcel(file: File, only?: ImportKind) {
         const debitAcc = cellStr(get(r, "الحساب المدين", "الحساب"));
         const creditAcc = cellStr(get(r, "الحساب الدائن"));
         result.journal.push({
-          id: uid(), date: toDate(get(r, "التاريخ")),
+          id: uid(),
+          date: toDate(get(r, "التاريخ")),
           formNo: cellStr(get(r, "رقم الاستمارة")),
           settlement: cellStr(get(r, "كشف التسوية")),
-          description, account: debitAcc,
-          debitAccount: debitAcc, creditAccount: creditAcc,
+          description,
+          account: debitAcc,
+          debitAccount: debitAcc,
+          creditAccount: creditAcc,
           debit: parseNumericValue(get(r, "مدين")),
           credit: parseNumericValue(get(r, "دائن")),
         });
@@ -605,10 +690,16 @@ export async function importFromExcel(file: File, only?: ImportKind) {
         const totalPaid = Object.values(payments).reduce((s, v) => s + v, 0);
         result.installments.push({
           no: get(r, "م") ? Number(get(r, "م")) : null,
-          name, batch: cellStr(get(r, "الدفعة")),
-          specialty: cellStr(get(r, "التخصص")), fees, prevDue,
-          payments, totalPaid, remaining: prevDue - totalPaid,
-          notes: cellStr(get(r, "الملاحظات")), phone: cellStr(get(r, "الجوال")),
+          name,
+          batch: cellStr(get(r, "الدفعة")),
+          specialty: cellStr(get(r, "التخصص")),
+          fees,
+          prevDue,
+          payments,
+          totalPaid,
+          remaining: prevDue - totalPaid,
+          notes: cellStr(get(r, "الملاحظات")),
+          phone: cellStr(get(r, "الجوال")),
         });
       });
     }
@@ -617,8 +708,18 @@ export async function importFromExcel(file: File, only?: ImportKind) {
 }
 
 const MONTHLY_NAMES = [
-  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
 
 function normName(s: string) {
@@ -657,7 +758,17 @@ function buildMonthlySheet(journal: Journal[], year: number, month: number): XLS
 
   const rows: (string | number)[][] = [];
   rows.push([STATEMENT_TITLE, "", "", "", "", "", "", "", ""]);
-  rows.push([`المحافظة: ${STATEMENT_GOV}`, "", `مكتب: ${STATEMENT_OFFICE}`, "", "", "", "", "", ""]);
+  rows.push([
+    `المحافظة: ${STATEMENT_GOV}`,
+    "",
+    `مكتب: ${STATEMENT_OFFICE}`,
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   rows.push([`عن شهر ${MONTHLY_NAMES[month - 1]} ${year}م`, "", "", "", "", "", "", "", ""]);
   rows.push([
     "بيان أنواع الحسابات الوسيطة",
@@ -665,43 +776,73 @@ function buildMonthlySheet(journal: Journal[], year: number, month: number): XLS
     `الرصيد في 1/1/${year} دائن`,
     `عمليات شهر ${MONTHLY_NAMES[month - 1]} مدين`,
     `عمليات شهر ${MONTHLY_NAMES[month - 1]} دائن`,
-    "الجملة مدين", "الجملة دائن",
+    "الجملة مدين",
+    "الجملة دائن",
     `الرصيد في ${year}/${month} مدين`,
     `الرصيد في ${year}/${month} دائن`,
   ]);
 
-  let GPD = 0, GPC = 0, GCD = 0, GCC = 0;
+  let GPD = 0,
+    GPC = 0,
+    GCD = 0,
+    GCC = 0;
   STATEMENT_GROUPS.forEach((g) => {
     rows.push([g.title, "", "", "", "", "", "", "", ""]);
-    let gPD = 0, gPC = 0, gCD = 0, gCC = 0;
+    let gPD = 0,
+      gPC = 0,
+      gCD = 0,
+      gCC = 0;
     g.accounts.forEach((a) => {
       const r = map[normName(a)] || { prevD: 0, prevC: 0, curD: 0, curC: 0 };
       const totD = r.prevD + r.curD;
       const totC = r.prevC + r.curC;
       const balD = Math.max(0, totD - totC);
       const balC = Math.max(0, totC - totD);
-      gPD += r.prevD; gPC += r.prevC; gCD += r.curD; gCC += r.curC;
+      gPD += r.prevD;
+      gPC += r.prevC;
+      gCD += r.curD;
+      gCC += r.curC;
       rows.push([a, r.prevD, r.prevC, r.curD, r.curC, totD, totC, balD, balC]);
     });
-    GPD += gPD; GPC += gPC; GCD += gCD; GCC += gCC;
+    GPD += gPD;
+    GPC += gPC;
+    GCD += gCD;
+    GCC += gCC;
     rows.push([
-      "جملة " + g.title, gPD, gPC, gCD, gCC,
-      gPD + gCD, gPC + gCC,
+      "جملة " + g.title,
+      gPD,
+      gPC,
+      gCD,
+      gCC,
+      gPD + gCD,
+      gPC + gCC,
       Math.max(0, gPD + gCD - gPC - gCC),
       Math.max(0, gPC + gCC - gPD - gCD),
     ]);
   });
   rows.push([
-    "الإجمالي العام", GPD, GPC, GCD, GCC,
-    GPD + GCD, GPC + GCC,
+    "الإجمالي العام",
+    GPD,
+    GPC,
+    GCD,
+    GCC,
+    GPD + GCD,
+    GPC + GCC,
     Math.max(0, GPD + GCD - GPC - GCC),
     Math.max(0, GPC + GCC - GPD - GCD),
   ]);
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws["!cols"] = [
-    { wch: 42 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
-    { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+    { wch: 42 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
   ];
   ws["!merges"] = [
     { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },
@@ -742,7 +883,17 @@ function buildQuarterlySheet(journal: Journal[], year: number, quarter: number):
 
   const rows: (string | number)[][] = [];
   rows.push([STATEMENT_TITLE, "", "", "", "", "", "", "", ""]);
-  rows.push([`المحافظة: ${STATEMENT_GOV}`, "", `مكتب: ${STATEMENT_OFFICE}`, "", "", "", "", "", ""]);
+  rows.push([
+    `المحافظة: ${STATEMENT_GOV}`,
+    "",
+    `مكتب: ${STATEMENT_OFFICE}`,
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   rows.push([`حساب المدة - ${periodLabel}`, "", "", "", "", "", "", "", ""]);
   rows.push([
     "بيان أنواع الحسابات الوسيطة",
@@ -750,43 +901,73 @@ function buildQuarterlySheet(journal: Journal[], year: number, quarter: number):
     `الرصيد في ${year}/${startMonth}/1 دائن`,
     `حساب المدة الربع ${qNames[quarter - 1]} مدين`,
     `حساب المدة الربع ${qNames[quarter - 1]} دائن`,
-    "الجملة مدين", "الجملة دائن",
+    "الجملة مدين",
+    "الجملة دائن",
     `الرصيد في ${year}/${endMonth}/${lastDay} مدين`,
     `الرصيد في ${year}/${endMonth}/${lastDay} دائن`,
   ]);
 
-  let GPD = 0, GPC = 0, GCD = 0, GCC = 0;
+  let GPD = 0,
+    GPC = 0,
+    GCD = 0,
+    GCC = 0;
   STATEMENT_GROUPS.forEach((g) => {
     rows.push([g.title, "", "", "", "", "", "", "", ""]);
-    let gPD = 0, gPC = 0, gCD = 0, gCC = 0;
+    let gPD = 0,
+      gPC = 0,
+      gCD = 0,
+      gCC = 0;
     g.accounts.forEach((a) => {
       const r = map[normName(a)] || { prevD: 0, prevC: 0, curD: 0, curC: 0 };
       const totD = r.prevD + r.curD;
       const totC = r.prevC + r.curC;
       const balD = Math.max(0, totD - totC);
       const balC = Math.max(0, totC - totD);
-      gPD += r.prevD; gPC += r.prevC; gCD += r.curD; gCC += r.curC;
+      gPD += r.prevD;
+      gPC += r.prevC;
+      gCD += r.curD;
+      gCC += r.curC;
       rows.push([a, r.prevD, r.prevC, r.curD, r.curC, totD, totC, balD, balC]);
     });
-    GPD += gPD; GPC += gPC; GCD += gCD; GCC += gCC;
+    GPD += gPD;
+    GPC += gPC;
+    GCD += gCD;
+    GCC += gCC;
     rows.push([
-      "جملة " + g.title, gPD, gPC, gCD, gCC,
-      gPD + gCD, gPC + gCC,
+      "جملة " + g.title,
+      gPD,
+      gPC,
+      gCD,
+      gCC,
+      gPD + gCD,
+      gPC + gCC,
       Math.max(0, gPD + gCD - gPC - gCC),
       Math.max(0, gPC + gCC - gPD - gCD),
     ]);
   });
   rows.push([
-    "الإجمالي العام", GPD, GPC, GCD, GCC,
-    GPD + GCD, GPC + GCC,
+    "الإجمالي العام",
+    GPD,
+    GPC,
+    GCD,
+    GCC,
+    GPD + GCD,
+    GPC + GCC,
     Math.max(0, GPD + GCD - GPC - GCC),
     Math.max(0, GPC + GCC - GPD - GCD),
   ]);
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws["!cols"] = [
-    { wch: 42 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
-    { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+    { wch: 42 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 14 },
   ];
   ws["!merges"] = [
     { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },
@@ -876,16 +1057,21 @@ function buildRevenueSheet(
   const itemsAgg: Record<string, { cur: number; prev: number }> = {};
   const sectionsAgg: Record<string, { cur: number; prev: number }> = {};
   const chaptersAgg: Record<string, { cur: number; prev: number }> = {};
-  let grandCur = 0, grandPrev = 0;
+  let grandCur = 0,
+    grandPrev = 0;
   REV.chapters.forEach((ch) => {
-    let cCur = 0, cPrev = 0;
+    let cCur = 0,
+      cPrev = 0;
     ch.sections.forEach((sec) => {
-      let sCur = 0, sPrev = 0;
+      let sCur = 0,
+        sPrev = 0;
       sec.items.forEach((it) => {
-        let iCur = 0, iPrev = 0;
+        let iCur = 0,
+          iPrev = 0;
         it.types.forEach((t) => {
           const k = `${ch.no}-${sec.no}-${it.no}-${t.no}`;
-          const cur = getVal(month, k), prev = sumPrev(k);
+          const cur = getVal(month, k),
+            prev = sumPrev(k);
           types[k] = { cur, prev };
           iCur += cur;
           iPrev += prev;
@@ -958,13 +1144,23 @@ function buildRevenueSheet(
       ws[`A${row}`] = { v: sec.title, t: "s" };
       merges.push(XLSX.utils.decode_range(`A${row}:B${row}`));
       ws[`D${row}`] = { v: sec.no, t: "n" };
-      sumRow(row, "I", sectionsAgg[`${ch.no}-${sec.no}`].cur, sectionsAgg[`${ch.no}-${sec.no}`].prev);
+      sumRow(
+        row,
+        "I",
+        sectionsAgg[`${ch.no}-${sec.no}`].cur,
+        sectionsAgg[`${ch.no}-${sec.no}`].prev,
+      );
       row++;
       sec.items.forEach((it) => {
         ws[`A${row}`] = { v: it.title, t: "s" };
         merges.push(XLSX.utils.decode_range(`A${row}:B${row}`));
         ws[`E${row}`] = { v: it.no, t: "n" };
-        sumRow(row, "I", itemsAgg[`${ch.no}-${sec.no}-${it.no}`].cur, itemsAgg[`${ch.no}-${sec.no}-${it.no}`].prev);
+        sumRow(
+          row,
+          "I",
+          itemsAgg[`${ch.no}-${sec.no}-${it.no}`].cur,
+          itemsAgg[`${ch.no}-${sec.no}-${it.no}`].prev,
+        );
         row++;
         it.types.forEach((t) => {
           const k = `${ch.no}-${sec.no}-${it.no}-${t.no}`;
@@ -994,9 +1190,19 @@ function buildRevenueSheet(
 
   ws["!ref"] = `A1:M${row}`;
   ws["!cols"] = [
-    { wch: 13 }, { wch: 35 }, { wch: 5 }, { wch: 5 }, { wch: 5 },
-    { wch: 5 }, { wch: 2 }, { wch: 4 }, { wch: 16 }, { wch: 4 },
-    { wch: 16 }, { wch: 4 }, { wch: 16 },
+    { wch: 13 },
+    { wch: 35 },
+    { wch: 5 },
+    { wch: 5 },
+    { wch: 5 },
+    { wch: 5 },
+    { wch: 2 },
+    { wch: 4 },
+    { wch: 16 },
+    { wch: 4 },
+    { wch: 16 },
+    { wch: 4 },
+    { wch: 16 },
   ];
   ws["!merges"] = merges;
   return ws;

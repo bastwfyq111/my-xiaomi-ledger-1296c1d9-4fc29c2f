@@ -338,38 +338,30 @@ export default function AccountsTab() {
   );
   const currentBalance = totalIncome - totalExpense;
 
+  // src/components/AccountTab.tsx
+  const filteredWithBalance = useMemo(() => {
+    // هل بيان الصف يمثّل "رصيد افتتاحي"؟
+    const isOpeningRow = (row: any) => String(row.description ?? "").includes("رصيد افتتاحي");
 
-// src/components/AccountTab.tsx  
-const filteredWithBalance = useMemo(() => {  
-  // هل بيان الصف يمثّل "رصيد افتتاحي"؟  
-  const isOpeningRow = (row: any) =>  
-    String(row.description ?? "").includes("رصيد افتتاحي");  
-  
-  // صف الرصيد الافتتاحي ثابت (يُؤخذ من كل السجلات، لا يتأثر بالفرز/الفلترة)  
-  const openingRow = accounts.find(isOpeningRow);  
-  const base = openingRow ? Number(openingRow.income) || 0 : 0;  
-  
-  // باقي الصفوف بترتيب العرض الحالي (فرز/فلترة) مع استبعاد صف الافتتاحي  
-  const displayedRows = filtered.filter((r) => !isOpeningRow(r));  
-  
-  // نمط إكسل: رصيد الصف = رصيد الصف الذي فوقه مباشرةً + إيراد − مصروف  
-  let runningBalance = base;  
-  const rest = displayedRows.map((row) => {  
-    runningBalance += (Number(row.income) || 0) - (Number(row.expense) || 0);  
-    return { ...row, balance: runningBalance };  
-  });  
-  
-  // صف الافتتاحي مثبّت في الأعلى ورصيده = مبلغ الإيراد نفسه (الأساس)  
-  const pinned = openingRow ? [{ ...openingRow, balance: base }] : [];  
-  return [...pinned, ...rest];  
-}, [filtered, accounts]);
+    // صف الرصيد الافتتاحي ثابت (يُؤخذ من كل السجلات، لا يتأثر بالفرز/الفلترة)
+    const openingRow = accounts.find(isOpeningRow);
+    const base = openingRow ? Number(openingRow.income) || 0 : 0;
 
-  
+    // باقي الصفوف بترتيب العرض الحالي (فرز/فلترة) مع استبعاد صف الافتتاحي
+    const displayedRows = filtered.filter((r) => !isOpeningRow(r));
 
+    // نمط إكسل: رصيد الصف = رصيد الصف الذي فوقه مباشرةً + إيراد − مصروف
+    let runningBalance = base;
+    const rest = displayedRows.map((row) => {
+      runningBalance += (Number(row.income) || 0) - (Number(row.expense) || 0);
+      return { ...row, balance: runningBalance };
+    });
 
-  
+    // صف الافتتاحي مثبّت في الأعلى ورصيده = مبلغ الإيراد نفسه (الأساس)
+    const pinned = openingRow ? [{ ...openingRow, balance: base }] : [];
+    return [...pinned, ...rest];
+  }, [filtered, accounts]);
 
-  
   const submit = () => {
     if (!form.description && !form.name) {
       toast.error("يرجى إدخال الاسم أو البيان على الأقل");
@@ -603,13 +595,48 @@ const filteredWithBalance = useMemo(() => {
               v={form.specialty}
               on={(v) => setForm({ ...form, specialty: v })}
             />
-            <Field
-              label="الاسم الكامل"
-              icon={<User className="w-4 h-4 text-slate-400" />}
-              v={form.name}
-              on={(v) => setForm({ ...form, name: v })}
-              placeholder="اسم المتدرب..."
-            />
+            <div className="relative">
+              <label className="block text-xs font-bold text-slate-500 mb-1.5 mr-1">
+                الاسم الكامل
+              </label>
+              <div className="relative flex items-center">
+                <span className="absolute right-3 z-10">
+                  <User className="w-4 h-4 text-slate-400" />
+                </span>
+                <input
+                  value={nameQuery}
+                  onChange={(e) => {
+                    setNameQuery(e.target.value);
+                    setForm({ ...form, name: e.target.value });
+                    setShowSugg(true);
+                  }}
+                  onFocus={() => setShowSugg(true)}
+                  onBlur={() => setTimeout(() => setShowSugg(false), 200)}
+                  placeholder="ابحث أو اكتب الاسم..."
+                  className="w-full pr-9 pl-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:border-[#10528e] bg-white text-slate-700 font-medium"
+                />
+              </div>
+              {showSugg && nameSuggestions.length > 0 && (
+                <ul className="absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+                  {nameSuggestions.map((t, idx) => (
+                    <li key={idx}>
+                      <button
+                        type="button"
+                        onMouseDown={() => pickName(t)}
+                        className="w-full text-right px-4 py-2.5 hover:bg-blue-50/50 border-b border-slate-100 last:border-0 transition-colors"
+                      >
+                        <div className="font-bold text-sm text-slate-800">{t.name}</div>
+                        {t.specialty && (
+                          <div className="text-xs text-[#10528e] mt-0.5 font-bold">
+                            {t.specialty} {t.batch ? `— ${t.batch}` : ""}
+                          </div>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <Field
               label="مبلغ الحافظة"
               type="number"

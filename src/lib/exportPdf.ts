@@ -624,5 +624,3 @@ export function revenuePdf(revenue: Record<string, number>, year: number, month:
   );
   w.document.close();
 }
-
-

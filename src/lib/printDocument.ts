@@ -21,11 +21,7 @@ export interface PrintDocumentOptions {
   margin?: string;
 }
 
-const baseCss = (
-  pageSize: string,
-  orientation: PrintOrientation,
-  margin: string
-) => `
+const baseCss = (pageSize: string, orientation: PrintOrientation, margin: string) => `
   /* وصف الطباعة العام */
   @page { size: ${pageSize} ${orientation}; margin: ${margin}; }
   * { box-sizing: border-box; }

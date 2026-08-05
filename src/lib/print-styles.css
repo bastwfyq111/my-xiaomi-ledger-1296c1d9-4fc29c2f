@@ -34,7 +34,7 @@
     width: 100%;
     background: white !important;
     color: #000 !important;
-    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-family: "Cairo", "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
     direction: rtl;
     line-height: 1.4;
     font-size: 12px;
@@ -42,7 +42,12 @@
   }
 
   /* العناوين */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     page-break-after: avoid;
     page-break-inside: avoid;
     font-weight: 800;
@@ -64,7 +69,8 @@
   }
 
   /* الفقرات والنصوص */
-  p, div {
+  p,
+  div {
     page-break-inside: avoid;
     margin: 4px 0 !important;
   }
@@ -153,7 +159,7 @@
   /* الأرقام والعملات */
   .currency,
   .number {
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     font-weight: 700;
     color: #000 !important;
   }
@@ -192,7 +198,8 @@
   }
 
   /* قوائم */
-  ul, ol {
+  ul,
+  ol {
     margin: 8px 0 !important;
     padding-right: 20px !important;
   }
@@ -242,16 +249,19 @@
   }
 
   /* التأكد من عدم قطع الخلايا */
-  td, th {
+  td,
+  th {
     page-break-inside: avoid;
   }
 
   /* تنسيق الخطوط */
-  strong, b {
+  strong,
+  b {
     font-weight: 700;
   }
 
-  em, i {
+  em,
+  i {
     font-style: italic;
   }
 
@@ -280,7 +290,7 @@
   .amount,
   .total {
     font-weight: 700;
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     color: #000 !important;
   }
 

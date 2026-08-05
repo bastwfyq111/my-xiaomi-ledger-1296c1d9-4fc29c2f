@@ -42,6 +42,7 @@ npx cap open android
 4. افتح المشروع في Android Studio، وابنِ الـ APK أو الـ App Bundle. تأكد من أن ملف `webDir` في `capacitor.config.json` يشير إلى مجلد البناء (`dist`).
 
 ملاحظات:
+
 - الخدمة service-worker بسيطة؛ قد تحتاج لتحسينها (cache strategies) خصوصاً إذا كانت الموارد كبيرة.
 - احفظ البيانات محلياً باستخدام IndexedDB (مثلاً مكتبة Dexie) لتعمل دون إنترنت.
 

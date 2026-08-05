@@ -4,7 +4,6 @@ import { RouterProvider } from "@tanstack/react-router";
 import { getRouter } from "./router";
 import "../src/styles.css";
 
-
 const router = getRouter();
 const container = document.getElementById("root");
 if (!container) throw new Error("Root element not found");

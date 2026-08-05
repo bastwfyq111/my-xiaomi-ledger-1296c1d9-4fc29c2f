@@ -201,13 +201,16 @@ function Index() {
                   onClick={() => setActiveTab(tab.value)}
                   className={`
                     flex flex-col items-center justify-center gap-1 px-3 py-2 flex-1 min-w-[64px] transition-all duration-200
-                    ${isActive
-                      ? "text-amber-400 bg-white/10 border-t-2 border-amber-400"
-                      : "text-white/60 hover:text-white hover:bg-white/5 border-t-2 border-transparent"
+                    ${
+                      isActive
+                        ? "text-amber-400 bg-white/10 border-t-2 border-amber-400"
+                        : "text-white/60 hover:text-white hover:bg-white/5 border-t-2 border-transparent"
                     }
                   `}
                 >
-                  <span className={`transition-transform duration-200 ${isActive ? "scale-110" : "scale-100"}`}>
+                  <span
+                    className={`transition-transform duration-200 ${isActive ? "scale-110" : "scale-100"}`}
+                  >
                     {tab.icon}
                   </span>
                   <span className="text-[10px] font-bold leading-tight whitespace-nowrap">
@@ -220,11 +223,13 @@ function Index() {
         </div>
 
         {/* مساحة آمنة للأجهزة ذات الشريط السفلي (iPhone X وما بعده) */}
-        <div className="h-safe-area-inset-bottom bg-[#0b3d6d]" style={{ height: "env(safe-area-inset-bottom)" }} />
+        <div
+          className="h-safe-area-inset-bottom bg-[#0b3d6d]"
+          style={{ height: "env(safe-area-inset-bottom)" }}
+        />
       </nav>
 
       <Toaster position="top-center" richColors />
     </div>
   );
 }
-

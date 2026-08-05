@@ -1,35 +1,35 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { fmt } from './format';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { fmt } from "./format";
 
 /**
  * تصدير كشف حساب المتدرب كملف PDF متوافق تماماً مع هواتف شاومي وأندرويد
  * يستخدم التوليد البرمجي المباشر لضمان السرعة وعدم تعليق الجهاز
  */
 export async function exportStudentStatementPdf(row: any, year: number): Promise<void> {
-  const safeName = (row.name || 'متدرب').replace(/[^\u0600-\u06FFa-zA-Z0-9._-]/g, '_');
+  const safeName = (row.name || "متدرب").replace(/[^\u0600-\u06FFa-zA-Z0-9._-]/g, "_");
   const fileName = `كشف_حساب_${safeName}_${year}.pdf`;
 
   // إنشاء مستند PDF جديد
   const doc = new jsPDF({
-    orientation: 'p',
-    unit: 'mm',
-    format: 'a4',
+    orientation: "p",
+    unit: "mm",
+    format: "a4",
     putOnlyUsedFonts: true,
-    compress: true
+    compress: true,
   });
 
   // إعدادات الخطوط العربية (استخدام الخط الافتراضي مع دعم RTL)
   doc.setR2L(true);
-  
+
   // العنوان الرئيسي
   doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text("المجلس اليمني للاختصاصات الطبية", 105, 15, { align: 'center' });
-  
+  doc.setFont("helvetica", "bold");
+  doc.text("المجلس اليمني للاختصاصات الطبية", 105, 15, { align: "center" });
+
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`كشف حساب رسمي - للعام ${year}م`, 105, 22, { align: 'center' });
+  doc.setFont("helvetica", "bold");
+  doc.text(`كشف حساب رسمي - للعام ${year}م`, 105, 22, { align: "center" });
 
   // خط فاصل
   doc.setDrawColor(31, 127, 184);
@@ -38,43 +38,71 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
 
   // معلومات المتدرب
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  
+  doc.setFont("helvetica", "normal");
+
   // إطار معلومات المتدرب
   doc.setDrawColor(0, 0, 0);
   doc.setLineWidth(1);
   doc.rect(10, 30, 190, 28);
-  
+
   // إضافة خطوط داخلية للإطار
   doc.line(105, 30, 105, 58);
   doc.line(10, 39, 200, 39);
   doc.line(10, 48, 200, 48);
-  
+
   const infoY = 34;
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.text("اسم المتدرب:", 15, infoY);
-  doc.setFont('helvetica', 'normal');
-  doc.text(row.name || '—', 50, infoY);
-  
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "normal");
+  doc.text(row.name || "—", 50, infoY);
+
+  doc.setFont("helvetica", "bold");
   doc.text("الدفعة:", 110, infoY);
-  doc.setFont('helvetica', 'normal');
-  doc.text(row.batch || '—', 145, infoY);
-  
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "normal");
+  doc.text(row.batch || "—", 145, infoY);
+
+  doc.setFont("helvetica", "bold");
   doc.text("المساق:", 15, infoY + 9);
-  doc.setFont('helvetica', 'normal');
-  doc.text(row.specialty || '—', 50, infoY + 9);
-  
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "normal");
+  doc.text(row.specialty || "—", 50, infoY + 9);
+
+  doc.setFont("helvetica", "bold");
   doc.text("رقم الهاتف:", 110, infoY + 9);
-  doc.setFont('helvetica', 'normal');
-  doc.text(row.phone || '—', 145, infoY + 9);
+  doc.setFont("helvetica", "normal");
+  doc.text(row.phone || "—", 145, infoY + 9);
 
   // البيانات المالية
-  const monthsList = year === 2025 ? 
-    ["يونيو 2024", "يوليو 2024", "أغسطس 2024", "مارس 2025", "ابريل 2025", "مايو 2025", "يونيو 2025", "يوليو 2025", "أغسطس 2025", "سبتمبر 2025", "أكتوبر 2025", "نوفمبر2025", "ديسمبر2025"] : 
-    ["يناير", "فبراير", "مارس", "ابريل", "مايو", "يونيو", "يوليو", "اغسطس", "سبتمبر", "اكتوبر ", "نوفمبر", "ديسمبر"];
+  const monthsList =
+    year === 2025
+      ? [
+          "يونيو 2024",
+          "يوليو 2024",
+          "أغسطس 2024",
+          "مارس 2025",
+          "ابريل 2025",
+          "مايو 2025",
+          "يونيو 2025",
+          "يوليو 2025",
+          "أغسطس 2025",
+          "سبتمبر 2025",
+          "أكتوبر 2025",
+          "نوفمبر2025",
+          "ديسمبر2025",
+        ]
+      : [
+          "يناير",
+          "فبراير",
+          "مارس",
+          "ابريل",
+          "مايو",
+          "يونيو",
+          "يوليو",
+          "اغسطس",
+          "سبتمبر",
+          "اكتوبر ",
+          "نوفمبر",
+          "ديسمبر",
+        ];
 
   const fees = Number(String(row.fees || 0).replace(/[^0-9.-]/g, "")) || 0;
   const prevDue = Number(String(row.prevDue || 0).replace(/[^0-9.-]/g, "")) || 0;
@@ -88,9 +116,9 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
     tableRows.push(["متبقي من العام 2025 (مدور)", fmt(prevDue)]);
   }
   tableRows.push(["إجمالي المبلغ المطلوب", fmt(dueTotal)]);
-  
+
   // تفاصيل السداد
-  monthsList.forEach(m => {
+  monthsList.forEach((m) => {
     const val = Number(row.payments?.[m]) || 0;
     if (val > 0) {
       tableRows.push([`سداد شهر ${m}`, fmt(val)]);
@@ -98,7 +126,10 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
   });
 
   tableRows.push(["إجمالي المسدد (له)", fmt(totalPaid)]);
-  tableRows.push([remaining > 0 ? "الرصيد المتبقي (عليه)" : "الرصيد الإضافي (له)", fmt(Math.abs(remaining))]);
+  tableRows.push([
+    remaining > 0 ? "الرصيد المتبقي (عليه)" : "الرصيد الإضافي (له)",
+    fmt(Math.abs(remaining)),
+  ]);
 
   // إنشاء الجدول برمجياً (سريع جداً)
   // ألوان الخلفية المميزة لكل صف
@@ -106,15 +137,19 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
   const totalRows = tableRows.length;
   tableRows.forEach((row, i) => {
     const label = row[0] as string;
-    if (label === 'إجمالي الرسوم المستحقة') {
+    if (label === "إجمالي الرسوم المستحقة") {
       rowColors[i] = [219, 234, 254]; // أزرق فاتح #dbeafe
-    } else if (label.includes('مدور') || label.includes('2025')) {
+    } else if (label.includes("مدور") || label.includes("2025")) {
       rowColors[i] = [253, 230, 138]; // أصفر #fde68a
-    } else if (label === 'إجمالي المبلغ المطلوب') {
+    } else if (label === "إجمالي المبلغ المطلوب") {
       rowColors[i] = [252, 165, 165]; // أحمر فاتح #fca5a5
-    } else if (label.includes('المسدد')) {
+    } else if (label.includes("المسدد")) {
       rowColors[i] = [167, 243, 208]; // أخضر فاتح #a7f3d0
-    } else if (label.includes('المتبقي') || label.includes('الإضافي') || label.includes('تم السداد')) {
+    } else if (
+      label.includes("المتبقي") ||
+      label.includes("الإضافي") ||
+      label.includes("تم السداد")
+    ) {
       rowColors[i] = [254, 202, 202]; // أحمر أفتح #fecaca
     } else {
       rowColors[i] = [255, 255, 255]; // أبيض
@@ -123,57 +158,57 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
 
   (doc as any).autoTable({
     startY: 62,
-    head: [['البيان', 'المبلغ']],
+    head: [["البيان", "المبلغ"]],
     body: tableRows,
-    styles: { 
-      font: 'helvetica', 
-      halign: 'center', 
+    styles: {
+      font: "helvetica",
+      halign: "center",
       fontSize: 11,
       cellPadding: 5,
       lineColor: [0, 0, 0],
-      lineWidth: 1
+      lineWidth: 1,
     },
-    headStyles: { 
-      fillColor: [31, 127, 184], 
-      textColor: [255, 255, 255], 
-      halign: 'center',
-      fontStyle: 'bold',
-      fontSize: 12
+    headStyles: {
+      fillColor: [31, 127, 184],
+      textColor: [255, 255, 255],
+      halign: "center",
+      fontStyle: "bold",
+      fontSize: 12,
     },
     bodyStyles: {
       lineColor: [0, 0, 0],
-      lineWidth: 1
+      lineWidth: 1,
     },
     alternateRowStyles: {
-      fillColor: [248, 250, 252]
+      fillColor: [248, 250, 252],
     },
     columnStyles: {
-      0: { cellWidth: 130, halign: 'right' },
-      1: { cellWidth: 60, halign: 'center', fontStyle: 'bold' }
+      0: { cellWidth: 130, halign: "right" },
+      1: { cellWidth: 60, halign: "center", fontStyle: "bold" },
     },
-    theme: 'grid',
+    theme: "grid",
     margin: { top: 62, right: 10, bottom: 20, left: 10 },
-    didParseCell: function(data: any) {
-      if (data.section === 'body' && data.row.index !== undefined) {
+    didParseCell: function (data: any) {
+      if (data.section === "body" && data.row.index !== undefined) {
         data.cell.styles.fillColor = rowColors[data.row.index] || [255, 255, 255];
       }
-    }
+    },
   });
 
   // إضافة توقيع وتاريخ في الأسفل
   const finalY = (doc as any).lastAutoTable?.finalY || 150;
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG-u-nu-latn')}`, 15, finalY + 15);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "normal");
+  doc.text(`تاريخ الإصدار: ${new Date().toLocaleDateString("ar-EG-u-nu-latn")}`, 15, finalY + 15);
+  doc.setFont("helvetica", "bold");
   doc.text("التوقيع: _______________", 15, finalY + 25);
 
   // الحل السحري لشاومي: استخدام Data URI بدلاً من Blob
   // هذا يفتح الملف مباشرة أو يبدأ تنزيله دون تعليق
-  const pdfData = doc.output('datauristring');
-  
+  const pdfData = doc.output("datauristring");
+
   // إنشاء رابط مخفي والنقر عليه
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = pdfData;
   link.download = fileName;
   document.body.appendChild(link);
@@ -183,9 +218,9 @@ export async function exportStudentStatementPdf(row: any, year: number): Promise
 
 // دالة محسّنة للطباعة من HTML
 export function printHtmlContent(htmlContent: string): void {
-  const w = window.open('', '_blank');
+  const w = window.open("", "_blank");
   if (!w) return;
-  
+
   // إضافة أنماط CSS محسّنة للطباعة
   const styledContent = `
     <!DOCTYPE html>
@@ -253,7 +288,7 @@ export function printHtmlContent(htmlContent: string): void {
     </body>
     </html>
   `;
-  
+
   w.document.write(styledContent);
   w.document.close();
 }
@@ -263,23 +298,27 @@ export function printTable(title: string, columns: string[], rows: (string | num
   const tableHtml = `
     <h1>${title}</h1>
     <div style="text-align: center; color: #000 !important; margin-bottom: 15px; font-weight: 700;">
-      ${new Date().toLocaleDateString('ar-EG-u-nu-latn')}
+      ${new Date().toLocaleDateString("ar-EG-u-nu-latn")}
     </div>
     <table>
       <thead>
         <tr>
-          ${columns.map(col => `<th>${col}</th>`).join('')}
+          ${columns.map((col) => `<th>${col}</th>`).join("")}
         </tr>
       </thead>
       <tbody>
-        ${rows.map(row => `
+        ${rows
+          .map(
+            (row) => `
           <tr>
-            ${row.map(cell => `<td>${cell === undefined || cell === null ? '' : cell}</td>`).join('')}
+            ${row.map((cell) => `<td>${cell === undefined || cell === null ? "" : cell}</td>`).join("")}
           </tr>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </tbody>
     </table>
   `;
-  
+
   printHtmlContent(tableHtml);
 }
