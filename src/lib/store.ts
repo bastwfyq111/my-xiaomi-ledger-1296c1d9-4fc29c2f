@@ -227,21 +227,23 @@ export const useStore = create<State>()(
       installmentConditionalRules2026: [],
 
       syncHafizaToAccount: (hafiza: Hafiza) => {
-        const year = hafiza.date?.split("-")[0];
-        // دعم المزامنة لسنوات 2025 و 2026 و 2027 لضمان مرونة أكبر
-        if (!["2025", "2026", "2027"].includes(year)) return;
+        try {
+          const year = hafiza.date?.split("-")[0];
+          if (!["2025", "2026", "2027"].includes(year)) return;
 
-        let existingAccount = get().accounts.find((acc) => acc.sourceHafizaId === hafiza.id);
-        if (!existingAccount && hafiza.hafizaNo) {
-          existingAccount = get().accounts.find((acc) => acc.hafizaNo === hafiza.hafizaNo);
-          if (existingAccount) {
-            set((state) => ({
-              accounts: state.accounts.map((acc) =>
-                acc.id === existingAccount!.id ? { ...acc, sourceHafizaId: hafiza.id } : acc,
-              ),
-            }));
+          const state = get();
+          let existingAccount = state.accounts.find((acc) => acc.sourceHafizaId === hafiza.id);
+          
+          if (!existingAccount && hafiza.hafizaNo) {
+            existingAccount = state.accounts.find((acc) => acc.hafizaNo === hafiza.hafizaNo && !acc.sourceHafizaId);
+            if (existingAccount) {
+              set((s) => ({
+                accounts: s.accounts.map((acc) =>
+                  acc.id === existingAccount!.id ? { ...acc, sourceHafizaId: hafiza.id } : acc,
+                ),
+              }));
+            }
           }
-        }
 
         const getNotifyAmount = (h: any): number => {
           const val = h.notifyAmount ?? h.supplyAmount ?? h.tawreedAmount ?? 0;
@@ -303,6 +305,9 @@ export const useStore = create<State>()(
               return { accounts: updatedAccounts, revenue: recalculateRevenueMap(updatedAccounts) };
             });
           }
+        }
+        } catch (error) {
+          console.error("Error in syncHafizaToAccount:", error);
         }
       },
 
@@ -475,31 +480,37 @@ export const useStore = create<State>()(
       setRevenue: (year, month, itemKey, amount) =>
         set((s) => ({ revenue: { ...s.revenue, [`${year}-${month}-${itemKey}`]: amount } })),
 
-      importData: (d) =>
-        set((s) => {
-          const importedAccounts = d.accounts
-            ? [
-                ...s.accounts,
-                ...d.accounts.map((a: any) => ({
-                  ...a,
-                  id: a.id || uid(),
-                  hafizaAmount: Number(a.hafizaAmount) || 0,
-                  income: Number(a.income) || 0,
-                  expense: Number(a.expense) || 0,
-                })),
-              ]
-            : s.accounts;
+      importData: (d) => {
+        try {
+          set((s) => {
+            // منع تكرار البيانات عند الاستيراد بناءً على المعرفات
+            const existingAccIds = new Set(s.accounts.map(a => a.id));
+            const newAccounts = (d.accounts || []).filter((a: any) => !existingAccIds.has(a.id));
+            
+            const importedAccounts = [
+              ...s.accounts,
+              ...newAccounts.map((a: any) => ({
+                ...a,
+                id: a.id || uid(),
+                hafizaAmount: Number(a.hafizaAmount) || 0,
+                income: Number(a.income) || 0,
+                expense: Number(a.expense) || 0,
+              })),
+            ];
 
-          const rawHafiza = d.hafiza || d.hafizas || [];
-          const importedHafiza = [
-            ...s.hafiza,
-            ...rawHafiza.map((h: any) => ({
-              ...h,
-              id: h.id || uid(),
-              hafizaAmount: Number(h.hafizaAmount) || 0,
-              notifyAmount: Number(h.notifyAmount) || 0,
-            })),
-          ];
+            const existingHafizaIds = new Set(s.hafiza.map(h => h.id));
+            const rawHafiza = d.hafiza || d.hafizas || [];
+            const newHafiza = rawHafiza.filter((h: any) => !existingHafizaIds.has(h.id));
+            
+            const importedHafiza = [
+              ...s.hafiza,
+              ...newHafiza.map((h: any) => ({
+                ...h,
+                id: h.id || uid(),
+                hafizaAmount: Number(h.hafizaAmount) || 0,
+                notifyAmount: Number(h.notifyAmount) || 0,
+              })),
+            ];
 
           return {
             trainees: d.trainees ? [...s.trainees, ...d.trainees] : s.trainees,
@@ -535,7 +546,11 @@ export const useStore = create<State>()(
             installmentConditionalRules2026:
               d.installmentConditionalRules2026 ?? s.installmentConditionalRules2026,
           };
-        }),
+        });
+        } catch (error) {
+          console.error("Error in importData:", error);
+        }
+      },
 
       exportAllData: () => ({
         trainees: get().trainees,

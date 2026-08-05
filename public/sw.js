@@ -1,12 +1,23 @@
 // خدمة العمل بدون إنترنت — تخزن الصفحة وكل أصولها بعد أول زيارة
 const CACHE = "majlis-yemen-v1";
-const APP_SHELL = ["/", "/manifest.json", "/icon-192.png", "/icon-512.png"];
+const APP_SHELL = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/Cairo-Regular.ttf",
+  "/styles.css"
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches
       .open(CACHE)
-      .then((c) => c.addAll(APP_SHELL))
+      .then((c) => {
+        console.log("Caching App Shell");
+        return c.addAll(APP_SHELL);
+      })
       .then(() => self.skipWaiting()),
   );
 });

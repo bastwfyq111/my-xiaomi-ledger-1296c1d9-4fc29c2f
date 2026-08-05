@@ -31,7 +31,7 @@ export function exportToPdf(opts: {
       width: 100%; 
       background: white;
       line-height: 1.4;
-      font-weight: 900 !important;
+      font-weight: 600;
     }
     h1 { 
       text-align: center; 
@@ -49,15 +49,15 @@ export function exportToPdf(opts: {
       margin-top: 8px;
     }
     th, td { 
-      border: 1.5px solid #000; 
-      padding: 0px 0px; 
+      border: 1px solid #000; 
+      padding: 4px 2px; 
       text-align: center; 
       vertical-align: middle;
       white-space: normal;
       word-wrap: break-word; 
       overflow-wrap: break-word; 
       word-break: break-word;
-      font-weight: 900 !important;
+      font-weight: 500;
       color: #000 !important;
     }
     th { 
@@ -113,7 +113,15 @@ export function exportToPdf(opts: {
       )
       .join("")}</tbody>
   </table>
-  <script>window.onload=()=>{setTimeout(()=>window.print(),500)}</script>`;
+  <script>
+    window.onload = () => {
+      setTimeout(() => {
+        window.print();
+        // إغلاق النافذة تلقائياً بعد الطباعة أو الإلغاء في بعض المتصفحات
+        window.onafterprint = () => window.close();
+      }, 800);
+    }
+  </script>`;
   w.document.write(
     `<!doctype html><html lang="ar" dir="rtl"><head>${head}</head><body>${body}</body></html>`,
   );
