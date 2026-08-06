@@ -150,56 +150,65 @@ function Index() {
     }
   };
 
-
   return (
     // الحاوية الرئيسية مع مساحة سفلية لشريط التنقل
     <div
-      className="w-full min-h-screen bg-[#f3f7fa] font-tajawal selection:bg-[#10528e]/20 text-sm sm:text-base pb-[72px]"
+      className="xiaomi-phone-shell app-surface w-full min-h-[100svh] font-tajawal selection:bg-cyan-400/25 text-sm sm:text-base"
       dir="rtl"
     >
       {/* قسم الهيدر العلوي */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 bg-gradient-to-r from-[#10528e] to-[#0b3d6d] p-3 sm:p-5 border-b border-slate-200/40 shadow-md text-white">
-        {/* الجزء الأيمن: الأيقونة، العنوان، والوصف */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="p-2 bg-white/10 rounded-xl text-white hidden sm:block">
-            <FileSpreadsheet className="w-5 h-5" />
+      <div className="safe-pad-top relative overflow-hidden rounded-b-[2rem] border-b border-white/25 bg-[linear-gradient(135deg,#0f3a6d_0%,#126d8f_48%,#15a39d_100%)] p-4 text-white shadow-[0_18px_45px_rgba(8,47,73,0.24)] sm:p-6 lg:mx-4 lg:mt-4 lg:rounded-[2rem]">
+        <div className="pointer-events-none absolute -left-12 top-0 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
+        <div className="pointer-events-none absolute -right-10 bottom-0 h-28 w-28 rounded-full bg-amber-300/20 blur-2xl" />
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* الجزء الأيمن: الأيقونة، العنوان، والوصف */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="hidden rounded-2xl border border-white/20 bg-white/15 p-3 text-white shadow-inner shadow-white/10 backdrop-blur sm:block">
+              <FileSpreadsheet className="h-7 w-7" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="w-fit rounded-full border border-white/20 bg-white/15 px-3 py-1 text-[10px] font-bold text-cyan-50 backdrop-blur">
+                لوحة مالية ذكية
+              </span>
+              <h1 className="font-cairo text-lg font-black leading-tight tracking-tight sm:text-2xl md:text-3xl">
+                المجلس اليمني للاختصاصات الطبية
+              </h1>
+              <p className="flex items-center gap-1.5 text-[11px] font-medium text-cyan-50/90 sm:text-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                </span>
+                نظام الإدارة المالية وحوافظ التوريد - صعدة • 2026م
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col gap-0.5">
-            <h1 className="text-base sm:text-lg md:text-2xl font-bold tracking-wide font-cairo">
-              المجلس اليمني للاختصاصات الطبية
-            </h1>
-            <p className="text-[10px] sm:text-xs md:text-sm opacity-85 font-medium flex items-center gap-1.5">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              نظام الإدارة المالية وحوافظ التوريد - صعدة • 2026م
-            </p>
-          </div>
-        </div>
 
-        {/* الجزء الأيسر: زر التثبيت PWA */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 px-1 sm:px-0">
-          {!isInstalled && (
-            <button
-              onClick={handlePWAInstall}
-              className="flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all shadow-sm"
-            >
-              <DownloadCloud className="w-3 h-3" />
-              <span>تثبيت التطبيق</span>
-            </button>
-          )}
+          {/* الجزء الأيسر: زر التثبيت PWA */}
+          <div className="flex flex-wrap items-center gap-2 px-1 sm:px-0">
+            {!isInstalled && (
+              <button
+                onClick={handlePWAInstall}
+                className="flex items-center gap-1.5 rounded-2xl border border-amber-200/60 bg-gradient-to-l from-amber-300 to-yellow-100 px-3 py-2 text-[11px] font-black text-slate-900 shadow-[0_10px_24px_rgba(245,158,11,0.28)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(245,158,11,0.34)] sm:text-xs"
+              >
+                <DownloadCloud className="h-4 w-4" />
+                <span>تثبيت التطبيق</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* دليل التثبيت اليدوي على أجهزة أندرويد / شاومي */}
       {showGuide && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 safe-pad-x safe-pad-bottom"
           onClick={() => setShowGuide(false)}
         >
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-5 text-right shadow-2xl"
+            className="w-full max-w-md rounded-[1.75rem] border border-white/80 bg-white/95 p-5 text-right shadow-[0_24px_70px_rgba(15,23,42,0.32)] backdrop-blur"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="font-cairo text-base font-bold text-[#10528e]">
+            <h2 className="font-cairo text-lg font-black text-[#10528e]">
               تثبيت التطبيق على جهاز شاومي / أندرويد
             </h2>
             <ol className="mt-3 list-decimal space-y-2 pr-5 text-xs leading-6 text-slate-700">
@@ -218,7 +227,7 @@ function Index() {
             </p>
             <button
               onClick={() => setShowGuide(false)}
-              className="mt-4 w-full rounded-lg bg-[#10528e] py-2 text-xs font-bold text-white"
+              className="mt-4 w-full rounded-2xl bg-gradient-to-l from-[#10528e] to-[#15a39d] py-2.5 text-xs font-black text-white shadow-lg"
             >
               حسناً
             </button>
@@ -226,27 +235,27 @@ function Index() {
         </div>
       )}
 
-
-
       {/* محتوى التبويب النشط */}
-      <div className="w-full bg-white p-2 sm:p-4 md:p-6 min-h-[calc(100vh-140px)]">
-        {activeTab === "installments" && <InstallmentsTab />}
-        {activeTab === "hafiza" && <HafizaTab />}
-        {activeTab === "account" && <AccountTab />}
-        {activeTab === "journal" && <JournalTab />}
-        {activeTab === "monthly" && <MonthlyStatementTab />}
-        {activeTab === "revenue" && <RevenueTab />}
-        {activeTab === "expenses-table" && <ExpensesTab />}
-        {activeTab === "general-expenses-ledger" && <AppTabs />}
+      <div className="xiaomi-content mx-auto w-full max-w-[1800px] p-2 sm:p-4 md:p-6">
+        <div className="app-content-card">
+          {activeTab === "installments" && <InstallmentsTab />}
+          {activeTab === "hafiza" && <HafizaTab />}
+          {activeTab === "account" && <AccountTab />}
+          {activeTab === "journal" && <JournalTab />}
+          {activeTab === "monthly" && <MonthlyStatementTab />}
+          {activeTab === "revenue" && <RevenueTab />}
+          {activeTab === "expenses-table" && <ExpensesTab />}
+          {activeTab === "general-expenses-ledger" && <AppTabs />}
+        </div>
       </div>
 
       {/* شريط التنقل السفلي الثابت */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 bg-[#0b3d6d] border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+        className="xiaomi-bottom-nav fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-slate-950/88 shadow-[0_-18px_45px_rgba(8,47,73,0.28)] backdrop-blur-xl sm:left-1/2 sm:bottom-4 sm:w-[min(920px,calc(100%-2rem))] sm:-translate-x-1/2 sm:rounded-[1.75rem] sm:border sm:border-white/15"
         dir="rtl"
       >
         {/* شريط التمرير الأفقي للتبويبات */}
-        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="safe-pad-x overflow-x-auto p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex w-max min-w-full">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.value;
@@ -255,20 +264,20 @@ function Index() {
                   key={tab.value}
                   onClick={() => setActiveTab(tab.value)}
                   className={`
-                    flex flex-col items-center justify-center gap-1 px-3 py-2 flex-1 min-w-[64px] transition-all duration-200
+                    flex min-w-[68px] flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 transition-all duration-200
                     ${
                       isActive
-                        ? "text-amber-400 bg-white/10 border-t-2 border-amber-400"
-                        : "text-white/60 hover:text-white hover:bg-white/5 border-t-2 border-transparent"
+                        ? "bg-white text-[#0b3d6d] shadow-lg shadow-cyan-950/25"
+                        : "text-white/65 hover:bg-white/10 hover:text-white"
                     }
                   `}
                 >
                   <span
-                    className={`transition-transform duration-200 ${isActive ? "scale-110" : "scale-100"}`}
+                    className={`transition-transform duration-200 ${isActive ? "scale-110 text-amber-500" : "scale-100"}`}
                   >
                     {tab.icon}
                   </span>
-                  <span className="text-[10px] font-bold leading-tight whitespace-nowrap">
+                  <span className="whitespace-nowrap text-[10px] font-black leading-tight">
                     {tab.shortLabel}
                   </span>
                 </button>
@@ -279,7 +288,7 @@ function Index() {
 
         {/* مساحة آمنة للأجهزة ذات الشريط السفلي (iPhone X وما بعده) */}
         <div
-          className="h-safe-area-inset-bottom bg-[#0b3d6d]"
+          className="h-safe-area-inset-bottom bg-transparent"
           style={{ height: "env(safe-area-inset-bottom)" }}
         />
       </nav>

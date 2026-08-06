@@ -33,7 +33,7 @@
   --radius: 0.85rem;
 
   /* 🌐 الخلفية العامة للموقع ونصوصها */
-  --background: oklch(0.98 0.005 240); /* خلفية فاتحة جداً بنقاء مريح للعين */
+  --background: oklch(0.97 0.018 230); /* خلفية سماوية فاتحة وفاخرة */
   --foreground: oklch(0.12 0.03 240); /* نصوص داكنة جداً لتباين ممتاز */
 
   /* 📦 البطاقات والحاويات الكبيرة */
@@ -41,7 +41,7 @@
   --card-foreground: oklch(0.12 0.03 240); /* نصوص البطاقات الداكنة */
 
   /* ⚡ اللون الأساسي (الأزرق اللامع لترويسات الجداول والأزرار الرئيسية) */
-  --primary: oklch(0.55 0.24 250); /* أزرق كهربائي لامع وحيوي جداً (Vibrant Electric Blue) */
+  --primary: oklch(0.48 0.19 235); /* أزرق مؤسسي عميق */
   --primary-foreground: oklch(0.99 0 0); /* النص المكتوب فوقه باللون الأبيض الناصع */
 
   /* 🔵 الألوان الثانوية والباهتة (تم تحويلها إلى درجات زرقاء لامعة مخففة) */
@@ -52,7 +52,7 @@
   --muted-foreground: oklch(0.45 0.12 245); /* نصوص زرقاء حيوية متوسطة السطوع للتواريخ والتلميحات */
 
   /* ✨ لون التمييز والتحويم */
-  --accent: oklch(0.6 0.22 255); /* أزرق نيون مشع عند تحويم الماوس أو التحديد */
+  --accent: oklch(0.68 0.17 185); /* فيروزي أنيق للتحديد */
   --accent-foreground: oklch(0.99 0 0); /* نص أبيض ناصع فوق التحديد */
 
   /* ⚠️ الحالات الخاصة (الأخطاء والنجاح) */
@@ -77,22 +77,36 @@
   }
   html {
     direction: rtl;
+    width: 100%;
+    max-width: 100vw;
+    min-height: 100%;
+    overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
   body {
     background:
-      radial-gradient(1200px 600px at 100% -10%, oklch(0.93 0.05 250 / 0.55), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, oklch(0.92 0.06 35 / 0.4), transparent 60%),
-      var(--color-background);
+      radial-gradient(900px 460px at 95% -10%, oklch(0.82 0.12 215 / 0.45), transparent 62%),
+      radial-gradient(760px 420px at 5% 12%, oklch(0.86 0.11 178 / 0.34), transparent 58%),
+      linear-gradient(180deg, oklch(0.99 0.012 220), var(--color-background));
     color: var(--color-foreground);
     font-family: "Tajawal", "Cairo", "Segoe UI", Tahoma, sans-serif;
     font-weight: 500;
     letter-spacing: 0;
+    width: 100%;
+    max-width: 100vw;
     min-height: 100dvh;
+    min-height: 100svh;
+    overflow-x: hidden;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
   }
+  #root {
+    width: 100%;
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+
   h1,
   h2,
   h3,
@@ -140,8 +154,69 @@
   }
   /* Smooth touch scrolling for horizontally-scrolling tables */
   .overflow-x-auto {
+    max-width: 100%;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
     scrollbar-width: thin;
+  }
+}
+
+.xiaomi-phone-shell {
+  min-height: 100svh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.xiaomi-bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.xiaomi-content {
+  min-height: calc(100svh - 140px);
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+
+.app-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-surface::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(oklch(0.2 0.04 240 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.2 0.04 240 / 0.045) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.app-content-card {
+  min-height: calc(100svh - 220px);
+  border: 1px solid oklch(1 0 0 / 0.76);
+  border-radius: 1.75rem;
+  background: oklch(1 0 0 / 0.88);
+  box-shadow:
+    0 24px 70px oklch(0.25 0.08 235 / 0.12),
+    inset 0 1px 0 oklch(1 0 0 / 0.75);
+  backdrop-filter: blur(18px);
+  overflow: visible;
+}
+
+.app-content-card > * {
+  min-width: 0;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .app-content-card {
+    background: white;
   }
 }
 
@@ -150,8 +225,8 @@
   body {
     /* Lighter background on small screens for performance */
     background:
-      radial-gradient(600px 300px at 100% -10%, oklch(0.93 0.05 250 / 0.4), transparent 60%),
-      var(--color-background);
+      radial-gradient(560px 300px at 100% -8%, oklch(0.82 0.12 215 / 0.36), transparent 64%),
+      linear-gradient(180deg, oklch(0.99 0.012 220), var(--color-background));
   }
   /* Respect notch / status bar / gesture nav on Xiaomi */
   .safe-pad-x {
@@ -177,6 +252,31 @@
   table input {
     font-size: 14px;
     padding: 3px 4px;
+  }
+
+  .xiaomi-content {
+    min-height: calc(100svh - 112px);
+    padding: 0.6rem 0.6rem calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .app-content-card {
+    min-height: calc(100svh - 190px);
+    border-radius: 1.25rem;
+  }
+}
+
+@media (max-width: 393px) {
+  body {
+    font-size: 14px;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  table th,
+  table td {
+    padding: 3px 2px;
   }
 }
 
