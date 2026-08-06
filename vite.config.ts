@@ -12,8 +12,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   tanstackStart: {
     // Use SPA export mode so no server entry is bundled.
-    // Valid values may include 'spa' or 'static'; 'spa' produces a client-side
-    // single-page application suitable for PWA installs.
+    // 'spa' produces a client-side single-page application suitable for PWA installs.
     exportMode: "spa",
   },
   vite: {
