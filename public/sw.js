@@ -1,6 +1,6 @@
-// خدمة العمل بدون إنترنت — تخزن الصفحة وكل أصولها بعد أول زيارة
-// تم تحديث اسم الكاش وضمّننا /index.html كنسخة احتياطية صريحة
-const CACHE = "majlis-yemen-v2";
+// خدمة العمل بدون إنترنت — تخزن الصفحة والأصول الأساسية بعد أول زيارة.
+// تم رفع نسخة الكاش لضمان استبدال النسخ القديمة التي قد تحتوي على أخطاء.
+const CACHE = "majlis-yemen-v3";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -10,66 +10,110 @@ const APP_SHELL = [
   "/Cairo-Regular.ttf",
 ];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
+const CACHEABLE_HOSTS = new Set([
+  self.location.hostname,
+  "fonts.googleapis.com",
+  "fonts.gstatic.com",
+]);
+
+function isCacheableRequest(request) {
+  if (request.method !== "GET") return false;
+  if (request.headers.has("range")) return false;
+
+  const url = new URL(request.url);
+  if (!CACHEABLE_HOSTS.has(url.hostname)) return false;
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
+async function cacheRequest(request, response) {
+  if (!response || !response.ok) return;
+  if (response.type !== "basic" && response.type !== "cors") return;
+
+  const cache = await caches.open(CACHE);
+  await cache.put(request, response.clone());
+}
+
+async function getAppShellFallback() {
+  return (
+    (await caches.match("/index.html")) ||
+    (await caches.match("/")) ||
+    new Response("التطبيق غير متاح بدون اتصال حالياً.", {
+      status: 503,
+      statusText: "Service Unavailable",
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    })
+  );
+}
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
     caches
       .open(CACHE)
-      .then((c) =>
-        // تخزين كل ملف على حدة حتى لا يفشل التثبيت بسبب ملف واحد مفقود
-        Promise.allSettled(APP_SHELL.map((u) => c.add(new Request(u, { cache: "reload" })))),
+      .then((cache) =>
+        // تخزين كل ملف على حدة حتى لا يفشل التثبيت بسبب ملف واحد مفقود.
+        Promise.allSettled(
+          APP_SHELL.map((url) =>
+            cache.add(new Request(url, { cache: "reload" })),
+          ),
+        ),
       )
       .then(() => self.skipWaiting()),
   );
 });
 
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE)
+            .map((key) => caches.delete(key)),
+        ),
+      )
       .then(() => self.clients.claim()),
   );
 });
 
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (
-    url.origin !== self.location.origin &&
-    !url.hostname.includes("fonts.googleapis.com") &&
-    !url.hostname.includes("fonts.gstatic.com")
-  )
-    return;
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  if (!isCacheableRequest(request)) return;
 
-  // التنقل بين الصفحات: الشبكة أولاً ثم الكاش
-  if (req.mode === "navigate") {
-    e.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
+  // التنقل بين الصفحات: الشبكة أولاً ثم نسخة التطبيق الاحتياطية.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          event.waitUntil(cacheRequest(request, response));
+          return response;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match("/index.html"))),
+        .catch(() =>
+          caches.match(request).then((cached) => cached || getAppShellFallback()),
+        ),
     );
     return;
   }
 
-  // الأصول: الكاش أولاً
-  e.respondWith(
-    caches.match(req).then(
-      (cached) =>
-        cached ||
-        fetch(req)
-          .then((res) => {
-            if (res.ok && (res.type === "basic" || res.type === "cors")) {
-              const copy = res.clone();
-              caches.open(CACHE).then((c) => c.put(req, copy));
-            }
-            return res;
-          })
-          .catch(() => cached),
-    ),
+  // الأصول: الكاش أولاً، ثم الشبكة، ثم رد واضح بدلاً من إرجاع undefined.
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+
+      return fetch(request)
+        .then((response) => {
+          event.waitUntil(cacheRequest(request, response));
+          return response;
+        })
+        .catch(
+          () =>
+            new Response("هذا المورد غير متاح بدون اتصال.", {
+              status: 503,
+              statusText: "Service Unavailable",
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+            }),
+        );
+    }),
   );
 });
