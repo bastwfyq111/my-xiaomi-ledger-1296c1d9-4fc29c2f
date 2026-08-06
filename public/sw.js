@@ -2,22 +2,20 @@
 const CACHE = "majlis-yemen-v1";
 const APP_SHELL = [
   "/",
-  "/index.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
-  "/Cairo-Regular.ttf",
-  "/styles.css"
+  "/Cairo-Regular.ttf"
 ];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches
       .open(CACHE)
-      .then((c) => {
-        console.log("Caching App Shell");
-        return c.addAll(APP_SHELL);
-      })
+      .then((c) =>
+        // تخزين كل ملف على حدة حتى لا يفشل التثبيت بسبب ملف واحد مفقود
+        Promise.allSettled(APP_SHELL.map((u) => c.add(new Request(u, { cache: "reload" })))),
+      )
       .then(() => self.skipWaiting()),
   );
 });

@@ -118,22 +118,38 @@ const tabs: { value: Tab; label: string; shortLabel: string; icon: React.ReactNo
 function Index() {
   const [activeTab, setActiveTab] = useState<Tab>("installments");
   const [pwaInstallable, setPwaInstallable] = useState<boolean>(false);
+  const [showGuide, setShowGuide] = useState<boolean>(false);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
     setPwaInstallable(canInstall());
     const unsubscribe = onInstallAvailability((available) => {
       setPwaInstallable(available);
     });
+    if (typeof window !== "undefined") {
+      setIsInstalled(
+        window.matchMedia("(display-mode: standalone)").matches ||
+          (window.navigator as any).standalone === true,
+      );
+    }
     return () => unsubscribe();
   }, []);
 
   const handlePWAInstall = async () => {
+    if (!pwaInstallable) {
+      // متصفحات شاومي (MIUI) لا تدعم نافذة التثبيت التلقائية — نعرض الخطوات اليدوية
+      setShowGuide(true);
+      return;
+    }
     const success = await promptInstall();
     if (success) {
       toast.success("يتم الآن تثبيت النظام على جهازك.");
       setPwaInstallable(false);
+    } else {
+      setShowGuide(true);
     }
   };
+
 
   return (
     // الحاوية الرئيسية مع مساحة سفلية لشريط التنقل
@@ -161,17 +177,56 @@ function Index() {
 
         {/* الجزء الأيسر: زر التثبيت PWA */}
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 px-1 sm:px-0">
-          {pwaInstallable && (
+          {!isInstalled && (
             <button
               onClick={handlePWAInstall}
               className="flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all shadow-sm"
             >
               <DownloadCloud className="w-3 h-3" />
-              <span>تثبيت</span>
+              <span>تثبيت التطبيق</span>
             </button>
           )}
         </div>
       </div>
+
+      {/* دليل التثبيت اليدوي على أجهزة أندرويد / شاومي */}
+      {showGuide && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setShowGuide(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-5 text-right shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="font-cairo text-base font-bold text-[#10528e]">
+              تثبيت التطبيق على جهاز شاومي / أندرويد
+            </h2>
+            <ol className="mt-3 list-decimal space-y-2 pr-5 text-xs leading-6 text-slate-700">
+              <li>افتح هذا الرابط داخل متصفح Google Chrome (وليس متصفح شاومي).</li>
+              <li>
+                اضغط على زر القائمة <span className="font-bold">(⋮)</span> أعلى يمين المتصفح.
+              </li>
+              <li>
+                اختر <span className="font-bold">إضافة إلى الشاشة الرئيسية</span> أو{" "}
+                <span className="font-bold">تثبيت التطبيق</span>.
+              </li>
+              <li>وافق على الإضافة، وسيظهر التطبيق بأيقونته على شاشة الجهاز ويعمل بدون إنترنت.</li>
+            </ol>
+            <p className="mt-3 rounded-lg bg-amber-50 p-2 text-[11px] text-amber-800">
+              ملاحظة: التثبيت يعمل على الرابط المنشور فقط (وليس داخل نافذة المعاينة).
+            </p>
+            <button
+              onClick={() => setShowGuide(false)}
+              className="mt-4 w-full rounded-lg bg-[#10528e] py-2 text-xs font-bold text-white"
+            >
+              حسناً
+            </button>
+          </div>
+        </div>
+      )}
+
+
 
       {/* محتوى التبويب النشط */}
       <div className="w-full bg-white p-2 sm:p-4 md:p-6 min-h-[calc(100vh-140px)]">
