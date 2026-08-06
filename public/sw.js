@@ -1,11 +1,13 @@
 // خدمة العمل بدون إنترنت — تخزن الصفحة وكل أصولها بعد أول زيارة
-const CACHE = "majlis-yemen-v1";
+// تم تحديث اسم الكاش وضمّننا /index.html كنسخة احتياطية صريحة
+const CACHE = "majlis-yemen-v2";
 const APP_SHELL = [
   "/",
+  "/index.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
-  "/Cairo-Regular.ttf"
+  "/Cairo-Regular.ttf",
 ];
 
 self.addEventListener("install", (e) => {
@@ -49,7 +51,7 @@ self.addEventListener("fetch", (e) => {
           caches.open(CACHE).then((c) => c.put(req, copy));
           return res;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match("/"))),
+        .catch(() => caches.match(req).then((r) => r || caches.match("/index.html"))),
     );
     return;
   }
