@@ -1,8 +1,10 @@
 {
+  "id": "/",
   "name": "قيود اليومية - المجلس اليمني",
   "short_name": "قيود اليومية",
   "description": "إدارة قيود اليومية وحوافظ التوريد - المجلس اليمني للاختصاصات الطبية",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f5fbfa",
