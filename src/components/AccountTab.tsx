@@ -167,6 +167,49 @@ export default function AccountsTab() {
   const [nameQuery, setNameQuery] = useState("");
   const [showSugg, setShowSugg] = useState(false);
 
+  // قائمة أسماء المتدربين + الأسماء المستخدمة سابقاً في سجلات الحساب
+  const nameOptions = useMemo<TraineeOption[]>(() => {
+    const map = new Map<string, TraineeOption>();
+    (trainees as TraineeOption[]).forEach((t) => {
+      const key = String(t?.name ?? "").trim();
+      if (key && !map.has(key)) {
+        map.set(key, { name: key, specialty: t.specialty ?? "", batch: t.batch ?? "" });
+      }
+    });
+    (accounts || []).forEach((a: any) => {
+      const key = String(a?.name ?? "").trim();
+      if (key && !map.has(key)) {
+        map.set(key, { name: key, specialty: a.specialty ?? "", batch: "" });
+      }
+    });
+    return Array.from(map.values());
+  }, [accounts]);
+
+  const nameSuggestions = useMemo<TraineeOption[]>(() => {
+    const q = nameQuery.trim().replace(/\s+/g, " ");
+    if (!q) return nameOptions.slice(0, 20);
+    return nameOptions
+      .filter((t) => t.name.replace(/\s+/g, " ").includes(q))
+      .slice(0, 20);
+  }, [nameOptions, nameQuery]);
+
+  const pickName = (t: TraineeOption) => {
+    setNameQuery(t.name);
+    setForm((prev) => ({
+      ...prev,
+      name: t.name,
+      specialty: t.specialty ? t.specialty : prev.specialty,
+    }));
+    setShowSugg(false);
+  };
+
+  const resetForm = () => {
+    setForm(emptyForm);
+    setNameQuery("");
+  };
+
+
+
   // مطابقة شاملة معتمدة على sourceHafizaId (مفتاح فريد) لمنع التكرار
   const handleSyncFromHafiza = () => {
     const source = hafiza && hafiza.length > 0 ? hafiza : useStore.getState().hafiza || [];
