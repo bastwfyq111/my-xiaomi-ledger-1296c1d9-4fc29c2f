@@ -118,22 +118,38 @@ const tabs: { value: Tab; label: string; shortLabel: string; icon: React.ReactNo
 function Index() {
   const [activeTab, setActiveTab] = useState<Tab>("installments");
   const [pwaInstallable, setPwaInstallable] = useState<boolean>(false);
+  const [showGuide, setShowGuide] = useState<boolean>(false);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
     setPwaInstallable(canInstall());
     const unsubscribe = onInstallAvailability((available) => {
       setPwaInstallable(available);
     });
+    if (typeof window !== "undefined") {
+      setIsInstalled(
+        window.matchMedia("(display-mode: standalone)").matches ||
+          (window.navigator as any).standalone === true,
+      );
+    }
     return () => unsubscribe();
   }, []);
 
   const handlePWAInstall = async () => {
+    if (!pwaInstallable) {
+      // متصفحات شاومي (MIUI) لا تدعم نافذة التثبيت التلقائية — نعرض الخطوات اليدوية
+      setShowGuide(true);
+      return;
+    }
     const success = await promptInstall();
     if (success) {
       toast.success("يتم الآن تثبيت النظام على جهازك.");
       setPwaInstallable(false);
+    } else {
+      setShowGuide(true);
     }
   };
+
 
   return (
     // الحاوية الرئيسية مع مساحة سفلية لشريط التنقل
