@@ -6,11 +6,15 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-// @cloudflare/vite-plugin builds from this — wrangler.jsonc main alone is insufficient.
+// Build as a client-only SPA (disable server entry / SSR build).
+// This switches TanStack Start into a static SPA export mode so the
+// Vite build produces only client HTML/JS/CSS assets.
 export default defineConfig({
   tanstackStart: {
-    server: { entry: "server" },
+    // Use SPA export mode so no server entry is bundled.
+    // Valid values may include 'spa' or 'static'; 'spa' produces a client-side
+    // single-page application suitable for PWA installs.
+    exportMode: "spa",
   },
   vite: {
     server: {
